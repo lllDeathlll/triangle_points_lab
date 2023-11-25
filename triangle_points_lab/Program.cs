@@ -1,4 +1,6 @@
-﻿internal class Program
+﻿namespace triangle_points_lab;
+
+internal abstract class Program
 {
     public static void Main(string[] args)
     {
@@ -26,17 +28,17 @@
             }
             
             // Calculates minimum x and y coordinates
-            var xMin = Convert.ToInt32((new double[3] { x[0], y[0], z[0] }).Min());
-            var xMax = Convert.ToInt32((new double[3] { x[0], y[0], z[0] }).Max());
-            var yMin = Convert.ToInt32((new double[3] { x[1], y[1], z[1] }).Min());
-            var yMax = Convert.ToInt32((new double[3] { x[1], y[1], z[1] }).Max());
+            var xMin = Convert.ToInt32((new [] { x[0], y[0], z[0] }).Min());
+            var xMax = Convert.ToInt32((new [] { x[0], y[0], z[0] }).Max());
+            var yMin = Convert.ToInt32((new [] { x[1], y[1], z[1] }).Min());
+            var yMax = Convert.ToInt32((new [] { x[1], y[1], z[1] }).Max());
             
             int coordinateCount = 0;
-            for (var i = xMin; i < xMax; i++)
+            for (var i = xMin; i <= xMax; i++)
             {
-                for (var j = yMin; j < yMax; j++)
+                for (var j = yMin; j <= yMax; j++)
                 {
-                    var point = new double[2] { i, j };
+                    var point = new double[] { i, j };
                     if (IsPointInTriangle(point, x, y, z))
                     {
                         coordinateCount++;
@@ -46,7 +48,7 @@
             Console.WriteLine($"Total points amount: {coordinateCount}\n");
 
             Console.WriteLine("Continue?\nYes/No");
-            if (Console.ReadLine().ToLower().Contains("no"))
+            if (Console.ReadLine()!.ToLower().Contains("no"))
             {
                 break;
             }
@@ -57,36 +59,31 @@
     /// Checks if point is in triangle.
     /// </summary>
     /// <param name="point"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="z"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <param name="c"></param>
     /// <returns></returns>
-    private static bool IsPointInTriangle(double[] point, double[] x, double[] y, double[] z)
+    private static bool IsPointInTriangle(double[] point, double[] a, double[] b, double[] c)
     {
-        /*
-         * Check the sign of the areas of
-         * smaller triangles formed by the
-         * point and pairs of vertices
-         */
-        var a = Sign(point, x, y) < 0.0;
-        var b = Sign(point, y, z) < 0.0;
-        var c = Sign(point, z, x) < 0.0;
+        // Differences between point and first vertex (a)
+        var xDifA = point[0] - a[0];
+        var yDifA = point[1] - a[1];
+        // Determine if point is on the same side of line AB as vertex C
+        // ReSharper disable once InconsistentNaming
+        bool pointSideAB = (b[0] - a[0]) * yDifA - (b[1] - a[1]) * xDifA > 0;
         
-        // Returns true, if the signs are all the same (inside the triangle)
-        return (a == b) && (b == c);
-    }
-    
-    /// <summary>
-    /// Calculates the sign of area formed by point.
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="z"></param>
-    /// <returns></returns>
-    private static double Sign(double[] x, double[] y, double[] z)
-    {
-        
-        return (x[0] - z[0]) * (y[1] - z[1]) - (y[0] - z[0]) * (x[1] - z[1]);
+        // Check if point is on the same side of line AC as vertex B
+        if ((c[0]-a[0])*yDifA-(c[1]-a[1])*xDifA > 0 == pointSideAB)
+        {
+            return false;
+        }
+        // Check if point is on the same side of line BC as vertex A
+        if ((c[0]-b[0])*(point[1]-b[1])-(c[1]-b[1])*(point[0]-b[0]) > 0 != pointSideAB)
+        {
+            return false;
+        }
+        // If point passes both checks, it lies within the triangle
+        return true;
     }
     
     /// <summary>
@@ -98,7 +95,7 @@
         var x1 = GetDouble();
         var x2 = GetDouble();
 
-        var coordinate = new double[2]{x1, x2};
+        var coordinate = new []{x1, x2};
         return coordinate;
     }
     
