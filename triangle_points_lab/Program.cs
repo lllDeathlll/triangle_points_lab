@@ -65,18 +65,18 @@ internal abstract class Program
     /// <returns></returns>
     private static bool IsPointInTriangle(double[] point, double[] a, double[] b, double[] c)
     {
-        // Calculate the differences in x and y coordinates between the given point and vertex a
+        // Calculate differences between the given point and vertex a
         var xDifA = point[0] - a[0];
         var yDifA = point[1] - a[1];
-        // Determine if the point is on the same side of the line AB as vertex C using cross product
+        // Check if the point is on the same side of AB as vertex C
         // ReSharper disable once InconsistentNaming
         var pointSideAB = (b[0] - a[0]) * yDifA - (b[1] - a[1]) * xDifA > 0;
         
-        // Check if the point is on the same side of the line AC as vertex B using cross product
+        // Check if the point is on the same side of AC as vertex B
         if ((c[0]-a[0])*yDifA-(c[1]-a[1])*xDifA > 0 == pointSideAB) return false;
-        // Check if the point is on the same side of the line BC as vertex A using cross product
+        // Check if the point is on the same side of BC as vertex A
         if ((c[0]-b[0])*(point[1]-b[1])-(c[1]-b[1])*(point[0]-b[0]) > 0 != pointSideAB) return false;
-        // If point passes both checks, it lies within the triangle
+        // If point passes both checks, returns true
         return true;
     }
     
