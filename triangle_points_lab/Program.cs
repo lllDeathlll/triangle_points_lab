@@ -63,7 +63,7 @@ internal abstract class Program
     /// <param name="b"></param>
     /// <param name="c"></param>
     /// <returns></returns>
-    private static bool IsPointInTriangle(double[] point, double[] a, double[] b, double[] c)
+    private static bool IsPointInTriangle(IReadOnlyList<double> point, IReadOnlyList<double> a, IReadOnlyList<double> b, IReadOnlyList<double> c)
     {
         // Calculate differences between the given point and vertex a
         var xDifA = point[0] - a[0];
