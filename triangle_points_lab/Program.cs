@@ -72,10 +72,10 @@ internal abstract class Program
         // ReSharper disable once InconsistentNaming
         var pointSideAB = (b[0] - a[0]) * yDifA - (b[1] - a[1]) * xDifA > 0;
         
-        // Check if the point is on the same side of the line AC as vertex B
-        // or the line BC as vertex A using cross product
-        if ((c[0]-a[0])*yDifA-(c[1]-a[1])*xDifA > 0 == pointSideAB
-            || (c[0]-b[0])*(point[1]-b[1])-(c[1]-b[1])*(point[0]-b[0]) > 0 != pointSideAB) return false;
+        // Check if the point is on the same side of the line AC as vertex B using cross product
+        if ((c[0]-a[0])*yDifA-(c[1]-a[1])*xDifA > 0 == pointSideAB) return false;
+        // Check if the point is on the same side of the line BC as vertex A using cross product
+        if ((c[0]-b[0])*(point[1]-b[1])-(c[1]-b[1])*(point[0]-b[0]) > 0 != pointSideAB) return false;
         // If point passes both checks, it lies within the triangle
         return true;
     }
