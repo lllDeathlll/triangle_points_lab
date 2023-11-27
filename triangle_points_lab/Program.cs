@@ -8,18 +8,18 @@ internal abstract class Program
         {
             Console.WriteLine("Hello, I'm a program that calculates a count of integer coordinates inside a triangle!");
             
-            double[] x;
-            double[] y;
-            double[] z;
+            Point a;
+            Point b;
+            Point c;
             
             try
             {
                 Console.WriteLine("Enter x1 and x2:");
-                x = GetCoordinate();
+                a = new Point(GetDouble(), GetDouble());
                 Console.WriteLine("Enter y1 and y2:");
-                y = GetCoordinate();
+                b = new Point(GetDouble(), GetDouble());
                 Console.WriteLine("Enter z1 and z2:");
-                z = GetCoordinate();
+                c = new Point(GetDouble(), GetDouble());
             }
             catch (Exception e)
             {
@@ -28,18 +28,19 @@ internal abstract class Program
             }
             
             // Calculates minimum x and y coordinates
-            var xMin = Convert.ToInt32((new [] { x[0], y[0], z[0] }).Min());
-            var xMax = Convert.ToInt32((new [] { x[0], y[0], z[0] }).Max());
-            var yMin = Convert.ToInt32((new [] { x[1], y[1], z[1] }).Min());
-            var yMax = Convert.ToInt32((new [] { x[1], y[1], z[1] }).Max());
-            
-            int coordinateCount = 0;
+            var xMin = Convert.ToInt32((new [] { a.X, b.X, c.X }).Min());
+            var xMax = Convert.ToInt32((new [] { a.X, b.X, c.X }).Max());
+            var yMin = Convert.ToInt32((new [] { a.Y, b.Y, c.Y }).Min());
+            var yMax = Convert.ToInt32((new [] { a.Y, b.Y, c.Y }).Max());
+
+            var triangle = new Triangle(a, b, c);
+            var coordinateCount = 0;
             for (var i = xMin; i <= xMax; i++)
             {
                 for (var j = yMin; j <= yMax; j++)
                 {
-                    var point = new double[] { i, j };
-                    if (IsPointInTriangle(point, x, y, z))
+                    var point = new Point(i,j);
+                    if (triangle.IsPointInside(point))
                     {
                         coordinateCount++;
                     }
@@ -48,49 +49,12 @@ internal abstract class Program
             Console.WriteLine($"Total points amount: {coordinateCount}\n");
 
             Console.WriteLine("Continue?\nYes/No");
-            if (Console.ReadLine()!.ToLower().Contains("no"))
+            var input = Console.ReadLine()!.ToLower();
+            if (input.Contains("no") || input == "n")
             {
                 break;
             }
         }
-    }
-
-    /// <summary>
-    /// Checks if point is in triangle.
-    /// </summary>
-    /// <param name="point"></param>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <param name="c"></param>
-    /// <returns></returns>
-    private static bool IsPointInTriangle(IReadOnlyList<double> point, IReadOnlyList<double> a, IReadOnlyList<double> b, IReadOnlyList<double> c)
-    {
-        // Calculate differences between the given point and vertex a
-        var xDifA = point[0] - a[0];
-        var yDifA = point[1] - a[1];
-        // Check if the point is on the same side of AB as vertex C
-        // ReSharper disable once InconsistentNaming
-        var pointSideAB = (b[0] - a[0]) * yDifA - (b[1] - a[1]) * xDifA > 0;
-        
-        // Check if the point is on the same side of AC as vertex B
-        if ((c[0]-a[0])*yDifA-(c[1]-a[1])*xDifA > 0 == pointSideAB) return false;
-        // Check if the point is on the same side of BC as vertex A
-        if ((c[0]-b[0])*(point[1]-b[1])-(c[1]-b[1])*(point[0]-b[0]) > 0 != pointSideAB) return false;
-        // If point passes both checks, returns true
-        return true;
-    }
-    
-    /// <summary>
-    /// Gets coordinate (two doubles) from user input.
-    /// </summary>
-    /// <returns></returns>
-    private static double[] GetCoordinate()
-    {
-        var x1 = GetDouble();
-        var x2 = GetDouble();
-
-        var coordinate = new []{x1, x2};
-        return coordinate;
     }
     
     /// <summary>
