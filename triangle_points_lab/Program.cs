@@ -118,8 +118,9 @@ internal abstract class Program
                                    b.X * (c.Y - a.Y) + 
                                    c.X * (a.Y - b.Y));
  
-        // Use Pick's theorem to calculate
-        // the no. of Interior points
+        // Use Pick's theorem: Area =  i + b/2 - 1
+        // (i - interior, b - boundary points)
+        // to calculate the  number of Interior points
         return ((doubleArea - boundaryPoints + 2) / 2);
     }
 }
