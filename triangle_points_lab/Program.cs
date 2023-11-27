@@ -2,6 +2,17 @@
 
 internal abstract class Program
 {
+    public struct Point
+    {
+        public Point(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+    
+        public int X { get; init; }
+        public int Y { get; init; }
+    }
     public static void Main(string[] args)
     {
         while (true)
@@ -15,11 +26,11 @@ internal abstract class Program
             try
             {
                 Console.WriteLine("Enter x1 and x2:");
-                a = new Point(GetDouble(), GetDouble());
+                a = new Point(GetInt(), GetInt());
                 Console.WriteLine("Enter y1 and y2:");
-                b = new Point(GetDouble(), GetDouble());
+                b = new Point(GetInt(), GetInt());
                 Console.WriteLine("Enter z1 and z2:");
-                c = new Point(GetDouble(), GetDouble());
+                c = new Point(GetInt(), GetInt());
             }
             catch (Exception e)
             {
@@ -27,45 +38,22 @@ internal abstract class Program
                 continue;
             }
             
-            // Calculates minimum x and y coordinates
-            var xMin = Convert.ToInt32((new [] { a.X, b.X, c.X }).Min());
-            var xMax = Convert.ToInt32((new [] { a.X, b.X, c.X }).Max());
-            var yMin = Convert.ToInt32((new [] { a.Y, b.Y, c.Y }).Min());
-            var yMax = Convert.ToInt32((new [] { a.Y, b.Y, c.Y }).Max());
+            Console.WriteLine($"Total points amount: {InternalPointsCount(a,b,c)}\n");
 
-            var triangle = new Triangle(a, b, c);
-            var coordinateCount = 0;
-            for (var i = xMin; i <= xMax; i++)
-            {
-                for (var j = yMin; j <= yMax; j++)
-                {
-                    var point = new Point(i,j);
-                    if (triangle.IsPointInside(point))
-                    {
-                        coordinateCount++;
-                    }
-                }
-            }
-            Console.WriteLine($"Total points amount: {coordinateCount}\n");
-
-            Console.WriteLine("Continue?\nYes/No");
+            Console.WriteLine("Continue?\nY/N");
             var input = Console.ReadLine()!.ToLower();
-            if (input.Contains("no") || input == "n")
+            if (!input.Contains('y'))
             {
                 break;
             }
         }
     }
     
-    /// <summary>
-    /// Gets user input and converts it to double.
-    /// </summary>
-    /// <returns></returns>
-    private static double GetDouble()
+    private static int GetInt()
     {
         try
         {
-            var variable = Convert.ToDouble(Console.ReadLine());
+            var variable = Convert.ToInt32(Console.ReadLine());
             return variable;
         }
         catch (OverflowException)
@@ -80,5 +68,58 @@ internal abstract class Program
         {
             throw new Exception($"Error {e}");
         }
+    }
+    
+    /// <summary>
+    /// Returns greatest common denominator of two numbers
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    private static int GetGcd(int a, int b)
+    {
+        if (b == 0)
+            return a;
+        return GetGcd(b, a % b);
+    }
+    
+    /// <summary>
+    /// Returns the number of int points between two points
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    static int GetBoundaryCount(Point x, Point y)
+    {
+        // Check if line parallel to axes
+        if (x.X == y.X)
+            return Math.Abs(x.Y - y.Y) - 1;
+ 
+        if (x.Y == y.Y)
+            return Math.Abs(x.X - y.X) - 1;
+ 
+        return GetGcd(Math.Abs(x.X - y.X), 
+            Math.Abs(x.Y - y.Y)) - 1;
+    }
+    
+    /// <summary>
+    /// Returns count of int points inside the triangle
+    /// </summary>
+    /// <returns></returns>
+    private static int InternalPointsCount(Point a, Point b, Point c)
+    {
+        // 3 extra integer points for the vertices
+        var boundaryPoints = GetBoundaryCount(a, b) + 
+                             GetBoundaryCount(a, c) + 
+                             GetBoundaryCount(b, c) + 3;
+ 
+        // Calculate 2*A for the triangle
+        var doubleArea = Math.Abs(a.X * (b.Y - c.Y) + 
+                                   b.X * (c.Y - a.Y) + 
+                                   c.X * (a.Y - b.Y));
+ 
+        // Use Pick's theorem to calculate
+        // the no. of Interior points
+        return ((doubleArea - boundaryPoints + 2) / 2);
     }
 }
