@@ -2,7 +2,7 @@
 
 internal abstract class Program
 {
-    public struct Point
+    private struct Point
     {
         public Point(int x, int y)
         {
@@ -78,9 +78,7 @@ internal abstract class Program
     /// <returns></returns>
     private static int GetGcd(int a, int b)
     {
-        if (b == 0)
-            return a;
-        return GetGcd(b, a % b);
+        return b == 0 ? a : GetGcd(b, a % b);
     }
     
     /// <summary>
@@ -89,7 +87,7 @@ internal abstract class Program
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    static int GetBoundaryCount(Point x, Point y)
+    private static int GetBoundaryPointsCount(Point x, Point y)
     {
         // Check if line parallel to axes
         if (x.X == y.X)
@@ -109,9 +107,9 @@ internal abstract class Program
     private static int InternalPointsCount(Point a, Point b, Point c)
     {
         // 3 extra integer points for the vertices
-        var boundaryPoints = GetBoundaryCount(a, b) + 
-                             GetBoundaryCount(a, c) + 
-                             GetBoundaryCount(b, c) + 3;
+        var boundaryPoints = GetBoundaryPointsCount(a, b) + 
+                             GetBoundaryPointsCount(a, c) + 
+                             GetBoundaryPointsCount(b, c) + 3;
  
         // Calculate 2*A for the triangle
         var doubleArea = Math.Abs(a.X * (b.Y - c.Y) + 
